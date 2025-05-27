@@ -57,8 +57,9 @@ This script performs updates to:
 
 It does **not** create any backups.
 
-This is intended for **demo/staging site environments only**.  
+This is intended for **demo/staging site environments only**.
 **Do NOT run this on your main production site. It doesn't perform any backups. **  
+
 
 ---
 
