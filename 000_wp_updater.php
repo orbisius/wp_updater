@@ -3,6 +3,8 @@
  * Simple updater script for one demo site.
  * Add this script to the root of your demo WordPress installation where wp-config.php is located.
  *
+ * Always use the latest version: https://github.com/orbisius/wp_updater
+ *
  * Works via browser or command line interface (CLI).
  *
  * Usage:
