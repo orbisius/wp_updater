@@ -2,7 +2,7 @@
 /**
  * Full WordPress site updater script. Works via browser or command line interface (CLI).
  * Add this script to the root of your WordPress installation where wp-config.php is located.
- *
+ * License: GPL-2.0-or-later
  * Usage:
  *   Browser: https://yourdemo.com/000_wp_updater.php?go=SomeSmartCode
  *   Browser (Mass Update): https://yourdemo.com/000_wp_updater.php?go=SomeSmartCode&all=1
