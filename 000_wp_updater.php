@@ -50,6 +50,11 @@ try {
     ini_set('output_buffering', 0);
     ini_set('zlib.output_compression', 0);
 
+    // https://stackoverflow.com/questions/20316338/intermittently-echo-out-data-with-long-running-php-script
+    if (function_exists('apache_setenv')) {
+        apache_setenv( 'no-gzip', 1 );
+    }
+
     // Disable PHP's output buffering
     ob_implicit_flush(1);
 
