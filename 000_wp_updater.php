@@ -7,7 +7,9 @@
  *
  * Usage:
  *   Browser: https://yourdemo.com/000_wp_updater.php?go=SomeSmartCode
- *   CLI:     php 000_wp_updater.php SomeSmartCode
+ *   CLI:     php 000_wp_updater.php
+ *   or
+ *   CLI:     php 000_wp_updater.php /path/to/your/wordpress/installation
  *
  * WARNING:
  * ------------
@@ -23,13 +25,21 @@
  * is not responsible for any damage, data loss, or downtime caused by its use.
  */
 
-$code = 'SomeSmartCode';
+$code = 'SomeSmartCode'; // secret code for web requests only.
 $WPCliBin = '/usr/local/bin/wp'; // Adjust this path to your WP-CLI binary
 
 try {
     $appExitCode = 0;
-
     $start_time = microtime(true);
+
+    // WordPress directory can be passed as an argument or defaults to the current directory
+    $WPDir = empty($argv[1]) ? __DIR__ : realpath($argv[1]);
+
+    // if it's empty that means that realpath() failed
+    if (empty($WPDir) || !is_dir($WPDir) || !file_exists($WPDir . '/wp-config.php')) {
+        throw new RuntimeException("Invalid WordPress directory: [$WPDir]");
+    }
+
     $php_open_base_dir = ini_get('open_basedir');
 
     // If open_basedir is set, we need to ensure WP-CLI can run. this seems to find it.
@@ -58,20 +68,14 @@ try {
     // Disable PHP's output buffering
     ob_implicit_flush(1);
 
-    if (PHP_SAPI === 'cli') {
-        $input = !empty($argv[1]) ? $argv[1] : '';
-    } else {
+    if (PHP_SAPI != 'cli') {
+        header('Content-Type: text/plain');
         $input = !empty($_REQUEST['go']) ? $_REQUEST['go'] : '';
-    }
 
-    $input = trim($input);
-
-    if ($input !== $code) {
-        if (PHP_SAPI !== 'cli') {
+        if (empty($input) || $input != $code) {
             http_response_code(403);
-            header('Content-Type: text/plain');
+            throw new Exception("Access Denied");
         }
-        throw new Exception("Access Denied");
     }
 
     // Disallow running as root for safety
@@ -97,16 +101,6 @@ try {
         if (!empty($exitCode)) {
             throw new RuntimeException("WP-CLI not executable or not found at: {$WPCliBin}");
         }
-    }
-
-    if (PHP_SAPI !== 'cli') {
-        header('Content-Type: text/plain');
-    }
-
-    $wp_config = __DIR__ . '/wp-config.php';
-
-    if (!file_exists($wp_config)) {
-        throw new Exception("ERROR: wp-config.php not found in the current directory.\n");
     }
 
     $url = shell_exec("$WPCliBin option get siteurl 2>/dev/null");
@@ -135,7 +129,7 @@ try {
     echo shell_exec("$WPCliBin plugin update --all $extraCmdFlags");
     app_flush();
 
-// Check if WooCommerce is active
+    // Check if WooCommerce is active
     $output = [];
     $exitCode = 1;
 
@@ -148,7 +142,7 @@ try {
         app_flush();
     }
 
-// Check if Elementor is active
+    // Check if Elementor is active
     $output = [];
     $exitCode = 1;
 
