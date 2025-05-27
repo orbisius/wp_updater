@@ -40,17 +40,17 @@ try {
     putenv('WP_CLI_CACHE_DIR=/dev/null');
     putenv('WP_CLI_DISABLE_AUTO_CHECK_UPDATE=1');
 
-// Error reporting settings
+    // Error reporting settings
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
 
-// Output buffering settings
+    // Output buffering settings
     ini_set('implicit_flush', 1);
     ini_set('output_buffering', 0);
     ini_set('zlib.output_compression', 0);
 
-// Disable PHP's output buffering
+    // Disable PHP's output buffering
     ob_implicit_flush(1);
 
     if (PHP_SAPI === 'cli') {
@@ -69,7 +69,7 @@ try {
         throw new Exception("Access Denied");
     }
 
-// Disallow running as root for safety
+    // Disallow running as root for safety
     if (PHP_SAPI === 'cli' && function_exists('posix_geteuid') && posix_geteuid() == 0) {
         throw new Exception("ERROR: Do not run this script as root. Use a non-privileged user (like www-data).\n");
     }
@@ -111,7 +111,7 @@ try {
     echo str_repeat('-', 50) . "\n";
     app_flush();
 
-// Check if multisite: used only for plugin/theme updates
+    // Check if multisite: used only for plugin/theme updates
     $output = [];
     $exitCode = 1;
     $extraCmdFlags = '';
