@@ -64,7 +64,7 @@ This is intended for **demo/staging site environments only**.
 
 ## 🛑 Disclaimer
 
-This script is provided **"as-is"** with no warranties.
+This script is provided **"AS-IS"** with no warranties.
 
 Use it at your own risk.  
 The author (Svetoslav Marinov | [https://orbisius.com](https://orbisius.com))  
