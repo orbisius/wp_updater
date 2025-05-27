@@ -1,17 +1,15 @@
 <?php
 /**
- * Simple updater script for one demo site.
- * Add this script to the root of your demo WordPress installation where wp-config.php is located.
- *
- * Always use the latest version: https://github.com/orbisius/wp_updater
- *
- * Works via browser or command line interface (CLI).
+ * Full WordPress site updater script. Works via browser or command line interface (CLI).
+ * Add this script to the root of your WordPress installation where wp-config.php is located.
  *
  * Usage:
  *   Browser: https://yourdemo.com/000_wp_updater.php?go=SomeSmartCode
  *   CLI:     php 000_wp_updater.php
  *   or
  *   CLI:     php 000_wp_updater.php /path/to/your/wordpress/installation
+ *
+ * Always use the latest version: https://github.com/orbisius/wp_updater
  *
  * WARNING:
  * ------------

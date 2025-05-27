@@ -1,0 +1,70 @@
+# WordPress Site Updater
+
+**Simple updater script for one demo site.**
+
+This script automates WordPress core, plugin, and theme updates. It's designed for **self-hosted demo environments only**, not production sites.
+
+---
+
+## 📂 Installation
+
+Add this script to the **root directory of your WordPress demo installation**, where `wp-config.php` is located.
+
+Always use the latest version:  
+**[https://github.com/orbisius/wp_updater](https://github.com/orbisius/wp_updater)**
+
+---
+
+## 🚀 Usage
+
+### From a Web Browser
+
+```bash
+https://yourdemo.com/000_wp_updater.php?go=SomeSmartCode
+```
+
+### From the Command Line (CLI)
+
+```bash
+php 000_wp_updater.php
+```
+
+Or with a specific WordPress path:
+
+```bash
+php 000_wp_updater.php /path/to/your/wordpress/installation
+```
+
+---
+
+## ⚠️ WARNING
+
+This script performs updates to:
+- WordPress core
+- All installed plugins
+- All installed themes
+
+It does **not** create any backups.
+
+This is intended for **demo environments only**.  
+**Do NOT run this on your main production site.**  
+Use it only in folders that contain demo installations.
+
+---
+
+## 🛑 Disclaimer
+
+This script is provided **“as-is”** with no warranties.
+
+Use it at your own risk.  
+The author (Svetoslav Marinov | [https://orbisius.com](https://orbisius.com))  
+is **not responsible** for any damage, data loss, or downtime caused by its use.
+
+---
+
+## 🤝 Need Help?
+
+Need help setting up or customizing this script?
+
+We're available for hire.  
+Reach out here: [https://orbisius.com/contact](https://orbisius.com/contact)
