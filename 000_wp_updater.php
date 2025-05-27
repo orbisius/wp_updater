@@ -144,13 +144,11 @@ echo str_repeat('-', 50) . "\n";
 app_flush();
 
 function app_flush()
-{   
-    if (PHP_SAPI === 'cli') {
-        return;
+{
+    if (PHP_SAPI != 'cli') {
+        echo str_repeat("\t", 512) . "\n"; // Add some spacing to ensure the web server sends the output
     }
 
-    echo str_repeat("\t", 512) . "\n"; // Add some spacing to ensure the web server sends the output
     @ob_flush();
     flush();
 }
-
