@@ -132,7 +132,7 @@ try {
         $url = empty($url) ? '' : trim($url);
 
         $currentDir = $idx + 1;
-        echo "[$currentDir/$totalDirs] Starting updater for [$url] in [$wpPath] ... \n";
+        echo "[$currentDir/$totalDirs] Starting updater for [$url] ... \n";
         echo str_repeat('-', 50) . "\n";
         appFlush();
 
@@ -185,7 +185,7 @@ try {
         runCommand($wpPath, "core update 2>&1");
         runCommand($wpPath, "core update-db 2>&1");
 
-        echo "Done with: $wpPath\n";
+        echo "Done\n";
         echo str_repeat('-', 50) . "\n\n";
         appFlush();
     }
