@@ -68,8 +68,20 @@ This is intended for **demo/staging site environments only**.
 This script is provided **"AS-IS"** with no warranties.
 
 Use it at your own risk.  
-The author (Svetoslav Marinov | [https://orbisius.com](https://orbisius.com))  
+The author (Svetoslav Marinov | [https://orbisius.com](https://orbisius.com?utm_source=github-orbisius-wp_updater&utm_medium=readme))  
 is **not responsible** for any damage, data loss, or downtime caused by its use.
+
+---
+
+## 🌐 Related Services
+
+### WordPress Demo Sites
+If you're a plugin developer or theme designer, check out the hosted WordPress demo sites on [WPDemo.net](https://wpdemo.net?utm_source=github-orbisius-wp_updater&utm_medium=readme)
+
+### WordPress Staging Sites
+If you're looking for an efficient way to manage staging WordPress sites, check out:
+- [qSandbox.com](https://qsandbox.com?utm_source=github-orbisius-wp_updater&utm_medium=readme)
+- [WPSandbox.net](https://wpsandbox.net?utm_source=github-orbisius-wp_updater&utm_medium=readme)
 
 ---
 
@@ -78,4 +90,4 @@ is **not responsible** for any damage, data loss, or downtime caused by its use.
 Need help setting up or customizing this script?
 
 We're available for hire.  
-Reach out here: [https://orbisius.com/contact](https://orbisius.com/contact)
+Reach out here: [https://orbisius.com/contact](https://orbisius.com/contact?utm_source=github-orbisius-wp_updater&utm_medium=readme)
