@@ -1,6 +1,6 @@
 # WordPress Site Updater
 
-**Simple updater script for one demo site.**
+**Simple updater script for one or more WordPress sites.**
 
 This script automates WordPress core, plugin, and theme updates. It's designed for **self-hosted staging/demo environments only**, not production sites.
 
