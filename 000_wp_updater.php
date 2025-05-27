@@ -24,124 +24,163 @@
  */
 
 $code = 'SomeSmartCode';
+$WPCliBin = '/usr/local/bin/wp'; // Adjust this path to your WP-CLI binary
 
-putenv('WP_CLI_CACHE_DIR=/dev/null');
-putenv('WP_CLI_DISABLE_AUTO_CHECK_UPDATE=1');
+try {
+    $appExitCode = 0;
+
+    $start_time = microtime(true);
+    $php_open_base_dir = ini_get('open_basedir');
+
+    // If open_basedir is set, we need to ensure WP-CLI can run. this seems to find it.
+    if (!empty($php_open_base_dir)) {
+        $WPCliBin = 'wp';
+    }
+
+    putenv('WP_CLI_CACHE_DIR=/dev/null');
+    putenv('WP_CLI_DISABLE_AUTO_CHECK_UPDATE=1');
 
 // Error reporting settings
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
 
 // Output buffering settings
-ini_set('implicit_flush', 1);
-ini_set('output_buffering', 0);
-ini_set('zlib.output_compression', 0);
+    ini_set('implicit_flush', 1);
+    ini_set('output_buffering', 0);
+    ini_set('zlib.output_compression', 0);
 
 // Disable PHP's output buffering
-ob_implicit_flush(1);
+    ob_implicit_flush(1);
 
-if (PHP_SAPI === 'cli') {
-    $input = !empty($argv[1]) ? $argv[1] : '';
-} else {
-    $input = !empty($_REQUEST['go']) ? $_REQUEST['go'] : '';
-}
-
-$input = trim($input);
-
-if ($input !== $code) {
-    if (PHP_SAPI !== 'cli') {
-        http_response_code(403);
-        header('Content-Type: text/plain');
+    if (PHP_SAPI === 'cli') {
+        $input = !empty($argv[1]) ? $argv[1] : '';
+    } else {
+        $input = !empty($_REQUEST['go']) ? $_REQUEST['go'] : '';
     }
-    exit("Access Denied\n");
-}
+
+    $input = trim($input);
+
+    if ($input !== $code) {
+        if (PHP_SAPI !== 'cli') {
+            http_response_code(403);
+            header('Content-Type: text/plain');
+        }
+        throw new Exception("Access Denied");
+    }
 
 // Disallow running as root for safety
-if (PHP_SAPI === 'cli' && function_exists('posix_geteuid') && posix_geteuid() == 0) {
-    exit("ERROR: Do not run this script as root. Use a non-privileged user (like www-data).\n");
-}
+    if (PHP_SAPI === 'cli' && function_exists('posix_geteuid') && posix_geteuid() == 0) {
+        throw new Exception("ERROR: Do not run this script as root. Use a non-privileged user (like www-data).\n");
+    }
 
-if (PHP_SAPI !== 'cli') {
-    header('Content-Type: text/plain');
-}
+    if (!function_exists('exec')) {
+        throw new RuntimeException("exec() is not available. Please enable it in php.ini.");
+    } elseif (!function_exists('shell_exec')) {
+        throw new RuntimeException("shell_exec() is not available. Please enable it in php.ini.");
+    }
 
-$wp_config = __DIR__ . '/wp-config.php';
+    // if full path check if it exists and is executable
+    if (substr($WPCliBin, 0, 1) == '/' && (!file_exists($WPCliBin) || !is_executable($WPCliBin))) {
+        throw new RuntimeException("WP-CLI not executable or not found at: {$WPCliBin}");
+    } else {
+        // check with info
+        $output = [];
+        $exitCode = 1;
+        exec("$WPCliBin --info 2>&1", $output, $exitCode);
 
-if (!file_exists($wp_config)) {
-    exit("ERROR: wp-config.php not found in the current directory.\n");
-}
+        if (!empty($exitCode)) {
+            throw new RuntimeException("WP-CLI not executable or not found at: {$WPCliBin}");
+        }
+    }
 
-$start_time = microtime(true);
+    if (PHP_SAPI !== 'cli') {
+        header('Content-Type: text/plain');
+    }
 
-echo "Starting updater ...\n";
-echo str_repeat('-', 50) . "\n";
-app_flush();
+    $wp_config = __DIR__ . '/wp-config.php';
+
+    if (!file_exists($wp_config)) {
+        throw new Exception("ERROR: wp-config.php not found in the current directory.\n");
+    }
+
+    $url = shell_exec("$WPCliBin option get siteurl 2>/dev/null");
+    $url = empty($url) ? '' : trim($url);
+
+    echo "Starting updater for [$url] ... \n";
+    echo str_repeat('-', 50) . "\n";
+    app_flush();
 
 // Check if multisite: used only for plugin/theme updates
-$output = [];
-$exitCode = 1;
-$extraCmdFlags = '';
-exec('wp core is-installed --network 2>&1', $output, $exitCode);
+    $output = [];
+    $exitCode = 1;
+    $extraCmdFlags = '';
+    exec("$WPCliBin core is-installed --network 2>&1", $output, $exitCode);
 
-if (empty($exitCode)) {
-    echo "Multisite detected. Using --network for plugin/theme updates.\n";
+    if (empty($exitCode)) {
+        echo "Multisite detected. Using --network for plugin/theme updates.\n";
+        app_flush();
+        $extraCmdFlags = '--network';
+    }
+
+    $extraCmdFlags .= ' 2>&1';
+
+    echo "Updating all WordPress plugins ...\n";
     app_flush();
-    $extraCmdFlags = '--network';
-}
-
-$extraCmdFlags .= ' 2>&1';
-
-echo "Updating all WordPress plugins ...\n";
-app_flush();
-echo shell_exec("wp plugin update --all $extraCmdFlags");
-app_flush();
+    echo shell_exec("$WPCliBin plugin update --all $extraCmdFlags");
+    app_flush();
 
 // Check if WooCommerce is active
-$output = [];
-$exitCode = 1;
+    $output = [];
+    $exitCode = 1;
 
-exec("wp plugin is-active woocommerce $extraCmdFlags", $output, $exitCode);
+    exec("$WPCliBin plugin is-active woocommerce $extraCmdFlags", $output, $exitCode);
 
-if (empty($exitCode)) {
-    echo "WooCommerce is active. Running WC DB update...\n";
-    app_flush();
-    echo shell_exec("wp wc update $extraCmdFlags");
-    app_flush();
-}
+    if (empty($exitCode)) {
+        echo "WooCommerce is active. Running WC DB update...\n";
+        app_flush();
+        echo shell_exec("$WPCliBin wc update $extraCmdFlags");
+        app_flush();
+    }
 
 // Check if Elementor is active
-$output = [];
-$exitCode = 1;
+    $output = [];
+    $exitCode = 1;
 
-exec("wp plugin is-active elementor $extraCmdFlags", $output, $exitCode);
+    exec("$WPCliBin plugin is-active elementor $extraCmdFlags", $output, $exitCode);
 
-if (empty($exitCode)) {
-    echo "Elementor is active. Running Elementor DB update...\n";
+    if (empty($exitCode)) {
+        echo "Elementor is active. Running Elementor DB update...\n";
+        app_flush();
+        echo shell_exec("$WPCliBin elementor update db $extraCmdFlags");
+        app_flush();
+    }
+
+    echo "Updating all WordPress themes ...\n";
     app_flush();
-    echo shell_exec("wp elementor update db $extraCmdFlags");
+
+    echo shell_exec("$WPCliBin theme update --all $extraCmdFlags");
+    app_flush();
+
+    echo "Updating WordPress...\n";
+    app_flush();
+
+    echo shell_exec("$WPCliBin core update 2>&1");
+    app_flush();
+
+    echo shell_exec("$WPCliBin core update-db 2>&1");
+    app_flush();
+} catch (Exception $e) {
+    $appExitCode = 255;
+    echo "ERROR: " . $e->getMessage() . "\n";
+} finally {
+    $exec_time = round(microtime(true) - $start_time, 4);
+    echo "Updater completed in $exec_time ...\n";
+    echo str_repeat('-', 50) . "\n";
     app_flush();
 }
 
-echo "Updating all WordPress themes ...\n";
-app_flush();
-
-echo shell_exec("wp theme update --all $extraCmdFlags");
-app_flush();
-
-echo "Updating WordPress...\n";
-app_flush();
-
-echo shell_exec('wp core update 2>&1');
-app_flush();
-
-echo shell_exec('wp core update-db 2>&1');
-app_flush();
-
-$exec_time = round(microtime(true) - $start_time, 4);
-echo "Updater completed in $exec_time ...\n";
-echo str_repeat('-', 50) . "\n";
-app_flush();
+exit($appExitCode);
 
 function app_flush()
 {
