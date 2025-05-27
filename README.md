@@ -4,14 +4,14 @@
 
 This script automates WordPress core, plugin, and theme updates. It's designed for **self-hosted staging/demo environments only**, not production sites.
 
+Always use the latest version:  
+**[https://github.com/orbisius/wp_updater](https://github.com/orbisius/wp_updater)**
+
 ---
 
 ## 📂 Installation
 
 Add this script to the **root directory of your WordPress demo installation**, where `wp-config.php` is located.
-
-Always use the latest version:  
-**[https://github.com/orbisius/wp_updater](https://github.com/orbisius/wp_updater)**
 
 ---
 
