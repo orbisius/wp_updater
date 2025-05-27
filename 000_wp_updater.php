@@ -185,7 +185,8 @@ try {
         runCommand($wpPath, "core update 2>&1");
         runCommand($wpPath, "core update-db 2>&1");
 
-        echo "Done with: $wpPath\n\n";
+        echo "Done with: $wpPath\n";
+        echo str_repeat('-', 50) . "\n\n";
         appFlush();
     }
 } catch (Exception $e) {
