@@ -19,20 +19,31 @@ Always use the latest version:
 
 ### From a Web Browser
 
+Single site update:
 ```bash
 https://yourdemo.com/000_wp_updater.php?go=SomeSmartCode
 ```
 
+Mass update all WordPress installations in the directory:
+```bash
+https://yourdemo.com/000_wp_updater.php?go=SomeSmartCode&all=1
+```
+
 ### From the Command Line (CLI)
 
+Single site update:
 ```bash
 php 000_wp_updater.php
 ```
 
 Or with a specific WordPress path:
-
 ```bash
 php 000_wp_updater.php /path/to/your/wordpress/installation
+```
+
+Mass update all WordPress installations in a directory:
+```bash
+php 000_wp_updater.php /path/to/parent/dir 1
 ```
 
 ---
@@ -54,7 +65,7 @@ Use it only in folders that contain demo installations.
 
 ## 🛑 Disclaimer
 
-This script is provided **“as-is”** with no warranties.
+This script is provided **"as-is"** with no warranties.
 
 Use it at your own risk.  
 The author (Svetoslav Marinov | [https://orbisius.com](https://orbisius.com))  
